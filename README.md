@@ -186,7 +186,10 @@ No uploads directory found at: <path>
 npm test
 ```
 
-## Publish Package (Maintainer)
+## rekomendasi script keyword(package.json)
+```bash
+"clean:uploads": "node node_modules/clean-orphan-uploads-cli/bin/clean-orphan-uploads.js",
+"clean:uploads:dry": "node node_modules/clean-orphan-uploads-cli/bin/clean-orphan-uploads.js --dry-run"
+```
 
-1. Set secret `NPM_TOKEN` di GitHub repo (`Settings > Secrets and variables > Actions`).
-2. Buat GitHub Release untuk trigger workflow publish.
+
