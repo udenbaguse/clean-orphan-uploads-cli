@@ -1,68 +1,67 @@
 ﻿# clean-orphan-uploads-cli
 
-CLI untuk menghapus file upload yatim (orphan files) di folder lokal berdasarkan data referensi path gambar di PostgreSQL.
+CLI to remove orphan upload files in a local folder based on image path reference data in PostgreSQL.
 
-Tool ini aman dipakai bertahap karena mendukung mode `--dry-run` untuk simulasi sebelum file benar-benar dihapus.
+This tool is safe to use incrementally because it supports `--dry-run` mode for simulation before files are actually deleted.
 
-## Cara Kerja Singkat
+## How It Works
 
-1. CLI membaca semua nilai path image dari tabel PostgreSQL.
-2. CLI membaca semua file di folder upload lokal.
-3. File yang tidak direferensikan lagi oleh database dianggap orphan.
-4. File orphan akan:
-   - hanya dilaporkan jika pakai `--dry-run`
-   - benar-benar dihapus jika tanpa `--dry-run`
+1. The CLI reads all image path values from the PostgreSQL table.
+2. The CLI reads all files in the local upload folder.
+3. Files that are no longer referenced by the database are considered orphan.
+4. Orphan files will:
+   - only be reported if using `--dry-run`
+   - be permanently deleted without `--dry-run`
 
-## Prasyarat
+## Prerequisites
 
 - Node.js `>=20`
-- PostgreSQL yang bisa diakses
-- Struktur data yang berisi path image (default: tabel `projects`, kolom `image`)
+- Accessible PostgreSQL database
+- Data structure containing image paths (default: `projects` table, `image` column)
 
-## Instalasi
+## Installation
 
-### Opsi 1: Install sebagai package
+### Option 1: Install as a package
 
 ```bash
-npm install clean-orphan-uploads-cli 
+npm install clean-orphan-uploads-cli
 ```
 
-
-### Opsi 2: Jalankan dari source repo ini
+### Option 2: Run from this source repo
 
 ```bash
 npm install github:udenbaguse/clean-orphan-uploads-cli
 ```
 
-## Step-by-Step Penggunaan (Direkomendasikan)
+## Step-by-Step Usage (Recommended)
 
-### Step 1 - Pastikan folder upload yang mau dibersihkan
+### Step 1 - Identify the upload folder to clean
 
-Contoh default folder:
+Example default folder:
 
 ```bash
 public/uploads
 ```
 
-Jika folder Anda berbeda, nanti gunakan `--uploads-dir <path>`.
+If your folder is different, use `--uploads-dir <path>` later.
 
-### Step 2 - Siapkan koneksi database
+### Step 2 - Prepare database connection
 
-Pilih salah satu cara berikut.
+Choose one of the following methods.
 
-#### Cara A (paling simpel): pakai `--db-url`
+#### Method A (simplest): use `--db-url`
 
 ```bash
 clean-orphan-uploads --db-url "postgres://user:pass@localhost:5432/dbname" --dry-run
 ```
 
-#### Cara B: pakai environment variable
+#### Method B: use environment variable
 
-Jika `--db-url` tidak diberikan, CLI akan membaca env
+If `--db-url` is not provided, the CLI will read from env
 
-`dotenv` otomatis di-load, jadi Anda bisa pakai file `.env`.
+`dotenv` is automatically loaded, so you can use a `.env` file.
 
-Contoh `.env`:
+Example `.env`:
 
 ```env
 DB_HOST=localhost
@@ -72,86 +71,87 @@ DB_USER=postgres
 DB_PASSWORD=secret
 ```
 
-### Step 3 - Jalankan simulasi dulu (`--dry-run`)
+### Step 3 - Always run a simulation first (`--dry-run`)
 
-Ini langkah wajib sebelum hapus sungguhan:
+This is a mandatory step before actual deletion:
 
 ```bash
 clean-orphan-uploads --dry-run
 ```
 
-Contoh output:
+Example output:
 
 ```text
 Dry-run complete. 12 file(s) would be removed from 130 file(s).
 ```
 
-### Step 4 - Review hasil simulasi
+### Step 4 - Review simulation results
 
-Jika jumlah file yang akan dihapus masuk akal, lanjut ke step 5.
+If the number of files to be deleted makes sense, proceed to step 5.
 
-Jika tidak sesuai, periksa:
+If not as expected, check:
 
 - `--uploads-dir`
 - `--table`
 - `--column`
 - `--path-prefix`
-- konfigurasi koneksi DB
+- DB connection configuration
 
-### Step 5 - Eksekusi penghapusan file orphan
+### Step 5 - Execute orphan file deletion
 
-Jalankan tanpa `--dry-run`:
+Run without `--dry-run`:
 
 ```bash
 clean-orphan-uploads
 ```
 
-Contoh output:
+Example output:
 
 ```text
 Removed 12 orphaned file(s) from 130 file(s).
 ```
 
-### Step 6 - Verifikasi pasca eksekusi
+### Step 6 - Post-execution verification
 
-- Cek isi folder upload sudah sesuai.
-- Jalankan lagi `--dry-run` untuk memastikan orphan sudah bersih.
+- Check that the upload folder contents are correct.
+- Run `--dry-run` again to ensure all orphans have been cleaned.
 
 ## Options
 
-- `--dry-run` lihat file yang akan dihapus tanpa menghapus
-- `--uploads-dir <path>` folder upload (default: `public/uploads`)
-- `--db-url <url>` PostgreSQL connection string (`DATABASE_URL` jika tidak diisi)
-- `--table <name>` nama tabel (default: `projects`)
-- `--column <name>` nama kolom path image (default: `image`)
-- `--path-prefix <prefix>` prefix path di DB (default: `/uploads/`)
-## Contoh Command Umum
+- `--dry-run` preview files that would be deleted without actually deleting them
+- `--uploads-dir <path>` upload folder (default: `public/uploads`)
+- `--db-url <url>` PostgreSQL connection string (`DATABASE_URL` if not set)
+- `--table <name>` table name (default: `projects`)
+- `--column <name>` image path column name (default: `image`)
+- `--path-prefix <prefix>` path prefix in DB (default: `/uploads/`)
 
-### Default (tabel `projects`, kolom `image`, folder `public/uploads`)
+## Common Command Examples
+
+### Default (table `projects`, column `image`, folder `public/uploads`)
 
 ```bash
 clean-orphan-uploads --dry-run
 ```
 
-### Folder upload custom
+### Custom upload folder
 
 ```bash
 clean-orphan-uploads --uploads-dir storage/uploads --dry-run
 ```
 
-### Tabel dan kolom custom
+### Custom table and column
 
 ```bash
 clean-orphan-uploads --table products --column thumbnail --dry-run
 ```
 
-### Prefix path custom
+### Custom path prefix
 
 ```bash
 clean-orphan-uploads --path-prefix /media/ --dry-run
 ```
 
-### Sekaligus dengan DB URL
+### Full command with DB URL
 
 ```bash
 clean-orphan-uploads \
@@ -163,25 +163,25 @@ clean-orphan-uploads \
   --dry-run
 ```
 
-## Catatan Penting
+## Important Notes
 
-- CLI hanya memproses file level pertama di dalam folder upload (bukan recursive ke subfolder).
-- Nilai `--table` dan `--column` wajib identifier SQL yang valid.
-- Jika folder upload tidak ditemukan, proses akan dilewati dengan pesan:
+- The CLI only processes files in the first level of the upload folder (not recursive into subfolders).
+- `--table` and `--column` values must be valid SQL identifiers.
+- If the upload folder is not found, the process will be skipped with the message:
 
 ```text
 No uploads directory found at: <path>
 ```
+
 ## Development
 
 ```bash
 npm test
 ```
 
-## rekomendasi script keyword(package.json)
+## Recommended Script Keywords (package.json)
+
 ```bash
 "clean:uploads": "node node_modules/clean-orphan-uploads-cli/bin/clean-orphan-uploads.js",
 "clean:uploads:dry": "node node_modules/clean-orphan-uploads-cli/bin/clean-orphan-uploads.js --dry-run"
 ```
-
-
