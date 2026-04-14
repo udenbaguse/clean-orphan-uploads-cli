@@ -26,7 +26,6 @@ Tool ini aman dipakai bertahap karena mendukung mode `--dry-run` untuk simulasi 
 ```bash
 npm install clean-orphan-uploads-cli 
 ```
-(belum diupload ke npm jadi belum bisa, kasih bintang repo ini yang banyak supaya bisa hadir di npm ya!)
 
 
 ### Opsi 2: Jalankan dari source repo ini
@@ -59,13 +58,7 @@ clean-orphan-uploads --db-url "postgres://user:pass@localhost:5432/dbname" --dry
 
 #### Cara B: pakai environment variable
 
-Jika `--db-url` tidak diberikan, CLI akan membaca env berikut:
-
-- `DB_HOST`
-- `DB_PORT` (default `5432`)
-- `DB_NAME`
-- `DB_USER`
-- `DB_PASSWORD`
+Jika `--db-url` tidak diberikan, CLI akan membaca env
 
 `dotenv` otomatis di-load, jadi Anda bisa pakai file `.env`.
 
@@ -178,12 +171,6 @@ clean-orphan-uploads \
 
 ```text
 No uploads directory found at: <path>
-```
-
-## Development
-
-```bash
-npm test
 ```
 
 ## rekomendasi script keyword(package.json)
