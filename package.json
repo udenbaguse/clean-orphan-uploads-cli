@@ -2,7 +2,7 @@
   "name": "clean-orphan-uploads-cli",
   "version": "1.0.0",
   "description": "CLI to clean orphaned uploaded files based on PostgreSQL image references",
-  "author": "Syam",
+  "author": "Muhamad Syamsudin A.K.A Udenbaguse",
   "license": "ISC",
   "type": "module",
   "bin": {
