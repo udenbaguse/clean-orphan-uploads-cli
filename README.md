@@ -173,11 +173,6 @@ clean-orphan-uploads \
 No uploads directory found at: <path>
 ```
 
-## Development
-
-```bash
-npm test
-```
 
 ## Recommended Script Keywords (package.json)
 
